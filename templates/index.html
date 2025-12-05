@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>食品検索</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 合計ボタン（右上） -->
+    <div style="position:absolute; top:20px; right:40px;">
+        <a href="/total"><button class="top-btn">📊 合計</button></a>
+    </div>
+
+    <h1 class="title">食品検索</h1>
+
+    <!-- 検索フォーム -->
+    <form method="POST" class="search-box">
+        <input type="text" name="food_name"
+               value="{{ food_name or '' }}"
+               placeholder="けんさく">
+        <button type="submit">検索</button>
+    </form>
+
+    {% if message %}
+    <p class="message">{{ message }}</p>
+    {% endif %}
+
+    <!-- 候補 -->
+    {% if candidates %}
+    <div class="candidates">
+        <form method="POST">
+            {% for c in candidates %}
+            <button class="candidate-btn" name="select_name" value="{{ c }}">
+                {{ c }}
+            </button>
+            {% endfor %}
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- 詳細 -->
+    {% if selected_name %}
+    <h2 class="table-title">{{ selected_name }} の栄養情報（100g）</h2>
+
+    <table>
+        <tr><th>項目</th><th>値</th></tr>
+        {% for row in result %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ row.value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+
+    <!-- g入力フォーム -->
+    <form action="/add/{{ selected_name }}" method="POST" class="search-box">
+        <input type="number" name="gram" min="1" placeholder="g 数を入力" required>
+        <button type="submit" class="top-btn">🛒 追加</button>
+    </form>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

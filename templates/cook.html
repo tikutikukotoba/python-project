@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ドラゴン料理 - キムラドラゴン</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        /* --- 背景 --- */
+        body {
+            font-family: 'Yu Gothic', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: radial-gradient(circle at top, #ffdf9e 0%, #3b0610 35%, #090008 100%);
+            color: #fff;
+            overflow-x: hidden;
+            transition: 0.6s;
+        }
+
+        body.stage-1 { filter: brightness(1); }
+        body.stage-2 { filter: brightness(1.15) saturate(1.2); }
+        body.stage-3 { filter: brightness(1.3) saturate(1.4); }
+
+        /* コンテナ */
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            background: rgba(40, 10, 20, 0.8);
+            border-radius: 25px;
+            box-shadow: 0 0 40px rgba(255, 130, 190, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1000;  /* ← 戻るボタンより下ではあるが十分前面 */
+        }
+
+        /* クリックを邪魔させない */
+        .container::before,
+        .container::after {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.7), transparent 60%);
+            opacity: 0.1;
+            filter: blur(4px);
+            animation: sparkleMove 10s linear infinite;
+            pointer-events: none;   /* ←クリックを邪魔しない */
+        }
+
+        .container::before { top: -100px; left: -100px; }
+        .container::after { bottom: -120px; right: -80px; animation-direction: reverse; }
+
+        @keyframes sparkleMove {
+            0% { transform: translate(0,0); opacity: 0.1; }
+            50% { transform: translate(40px,-20px); opacity: 0.25; }
+            100% { transform: translate(0,0); opacity: 0.1; }
+        }
+
+        /* 戻るボタンは最前面固定 */
+        .top-btn {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #ff6bd6, #ffa36b);
+            border-radius: 30px;
+            border: none;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.25s;
+
+            position: relative;
+            z-index: 99999; /* ← これで必ずクリックできる */
+        }
+
+        .top-btn:hover {
+            transform: scale(1.07);
+            box-shadow: 0 0 10px #fff;
+        }
+
+        /* ドラゴン画像 */
+        .dragon-box {
+            margin-top: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .dragon-img {
+            max-width: 380px;
+            animation: dragonFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 25px rgba(255,120,40,0.7));
+            position: relative;
+            z-index: 10; /* ←ブレスより前に */
+        }
+
+        @keyframes dragonFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 🔥 左向きブレス */
+        .dragon-breath {
+            position: absolute;
+            top: 50%;
+            right: 58%;
+            transform: translateY(-50%);
+            width: 320px;
+            height: 130px;
+
+            background: radial-gradient(circle at right,
+                        rgba(255,180,40,0.95),
+                        rgba(255,0,0,0.0));
+
+            filter: blur(8px);
+            opacity: 0.85;
+            border-radius: 50%;
+            pointer-events: none;  /* ←クリックを邪魔させない */
+            animation: breath 0.6s infinite;
+            z-index: 1;
+        }
+
+        @keyframes breath {
+            0% { transform: translateY(-50%) scale(0.8); opacity: 0.7; }
+            50% { transform: translateY(-50%) scale(1.3); opacity: 1; }
+            100% { transform: translateY(-50%) scale(0.9); opacity: 0.75; }
+        }
+
+        body.stage-1 .dragon-breath {
+            background: radial-gradient(circle at right,
+                        rgba(255,180,40,0.8),
+                        rgba(255,60,0,0.0));
+        }
+        body.stage-2 .dragon-breath {
+            background: radial-gradient(circle at right,
+                        rgba(255,240,120,0.95),
+                        rgba(255,40,0,0.0));
+        }
+        body.stage-3 .dragon-breath {
+            background: radial-gradient(circle at right,
+                        rgba(255,255,255,1.0),
+                        rgba(255,120,0,0.0));
+            box-shadow: 0 0 25px rgba(255,255,255,0.9);
+        }
+
+        /* 金フレーム */
+        .gold-frame {
+            margin-top: 40px;
+            padding: 25px;
+            border: 4px solid gold;
+            border-radius: 20px;
+            background: rgba(50,10,10,0.9);
+            box-shadow: 0 0 30px rgba(255,215,0,0.8);
+            text-align: center;
+        }
+
+        /* レアリティ */
+        .rarity-badge { padding: 6px 18px; border-radius: 999px; font-weight: bold; font-size: 16px; display: inline-block; }
+        .rarity-R { background: linear-gradient(90deg,#777,#aaa); }
+        .rarity-SR { background: linear-gradient(90deg,#3b82f6,#8b5cf6); }
+        .rarity-SSR { background: linear-gradient(90deg,#f97316,#ec4899); }
+        .rarity-UR { background: linear-gradient(90deg,#facc15,#f97316,#ec4899); }
+
+        /* タイトル */
+        .dragon-title {
+            font-size: 38px;
+            color: #ffdf5b;
+            text-shadow: 0 0 10px #ffb800, 0 0 20px #ffa200, 0 0 35px rgba(255,80,0,0.9);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px #ff9500; }
+            100% { text-shadow: 0 0 25px #ff0000; }
+        }
+
+        .dragon-text {
+            color: #ffe7c4;
+            font-size: 20px;
+            line-height: 1.9;
+        }
+
+        /* ステージ管理 */
+        .stage-panel { margin-top: 30px; text-align: center; }
+        .stage-text { font-size: 18px; }
+
+        .stage-dots { margin-top: 10px; }
+        .stage-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #555; margin: 0 4px; }
+        .stage-dot.active { background: #ffb84a; }
+
+        .stage-btn {
+            padding: 10px 24px;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(90deg,#22c55e,#a3e635);
+            color: #12310f;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 下の炎 */
+        .bottom-fire {
+            width: 100%;
+            height: 180px;
+            background: url('https://i.imgur.com/4Y6zODf.gif');
+            background-size: cover;
+            opacity: 0.9;
+            filter: blur(1px);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            pointer-events: none; /* ←クリックを邪魔しない */
+        }
+
+        /* 画面揺れ */
+        body.shake { animation: screenShake 0.25s linear 5; }
+        @keyframes screenShake {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(4px,-3px); }
+            50% { transform: translate(-3px,2px); }
+            75% { transform: translate(3px,3px); }
+            100% { transform: translate(0,0); }
+        }
+
+    </style>
+
+</head>
+<body class="stage-1">
+
+<div class="container">
+
+    <a href="/total">
+        <button class="top-btn">← 合計へ戻る</button>
+    </a>
+
+    <h1 class="title">ドラゴン料理 完成！</h1>
+
+    <!-- 🐉 ドラゴン本体 -->
+    <div class="dragon-box">
+        <img class="dragon-img" src="/static/dragon.png" alt="dragon">
+        <div class="dragon-breath"></div>
+    </div>
+
+    <!-- ⭐ 金フレーム -->
+    <div class="gold-frame">
+        <div id="rarityBadge" class="rarity-badge rarity-R">R</div>
+        <h2 id="recipeName" class="dragon-title">キムラドラゴン</h2>
+        <p id="description" class="dragon-text"></p>
+    </div>
+
+    <!-- 🔥 演出ステージ -->
+    <div class="stage-panel">
+        <p id="stageText" class="stage-text">
+            【第一段階】素材を祭壇に捧げ、竜の炎が灯り始める…。
+        </p>
+
+        <div class="stage-dots">
+            <span id="dot1" class="stage-dot active"></span>
+            <span id="dot2" class="stage-dot"></span>
+            <span id="dot3" class="stage-dot"></span>
+        </div>
+
+        <br>
+
+        <button id="stageButton" class="stage-btn">▶ 第二段階へ</button>
+    </div>
+
+</div>
+
+<div class="bottom-fire"></div>
+
+<script>
+/* 🍽️ 名前生成 ＆ レアリティ抽選 */
+function generateRecipeAndRarity() {
+    const prefixes = ["真・","煉獄","超絶","古代","禁忌","覚醒","爆炎","星霊","極","究極","神威","終焉"];
+    const suffixes = ["・改","Ω","∞","零式"," MK-II","",""];
+    const baseNames = ["キムラドラゴン","ドラゴンステーキ","ドラゴン煮込み","ドラゴングリル"];
+
+    const name = prefixes[Math.floor(Math.random()*prefixes.length)]
+               + baseNames[Math.floor(Math.random()*baseNames.length)]
+               + suffixes[Math.floor(Math.random()*suffixes.length)];
+
+    const rarityNum = Math.random()*100;
+    let rarity = "R", cls="rarity-R";
+
+    if (rarityNum < 3) rarity="UR", cls="rarity-UR";
+    else if (rarityNum <10) rarity="SSR", cls="rarity-SSR";
+    else if (rarityNum <30) rarity="SR", cls="rarity-SR";
+
+    document.getElementById("rarityBadge").className="rarity-badge "+cls;
+    document.getElementById("rarityBadge").textContent=rarity;
+
+    document.getElementById("recipeName").textContent=name;
+
+    document.getElementById("description").innerHTML =
+        `選ばれた素材を融合し、古代竜のブレスで完成した<b>${rarity}</b>ランクの料理。<br>
+         黄金の皮ととろける身は、食べる者に祝福をもたらすと伝わる。<br>
+         それが <b>${name}</b> である。`;
+}
+
+/* 🔥 演出ステージ */
+let stage = 1;
+function applyStage() {
+    document.body.classList.remove("stage-1","stage-2","stage-3");
+    document.body.classList.add("stage-"+stage);
+
+    document.getElementById("dot1").classList.remove("active");
+    document.getElementById("dot2").classList.remove("active");
+    document.getElementById("dot3").classList.remove("active");
+
+    if(stage>=1) document.getElementById("dot1").classList.add("active");
+    if(stage>=2) document.getElementById("dot2").classList.add("active");
+    if(stage>=3) document.getElementById("dot3").classList.add("active");
+
+    const t = document.getElementById("stageText");
+    const btn = document.getElementById("stageButton");
+
+    if(stage===1){
+        t.textContent="【第一段階】素材を祭壇に捧げ、竜の炎が灯り始める…。";
+        btn.textContent="▶ 第二段階へ";
+    }
+    if(stage===2){
+        t.textContent="【第二段階】竜が覚醒し、強力なブレスで一気に焼き上げる！";
+        btn.textContent="▶ 最終演出へ";
+    }
+    if(stage===3){
+        t.textContent="【最終段階】咆哮と共に世界を揺らす究極料理が完成！";
+        btn.textContent="★ もう一度演出を見る";
+        document.body.classList.add("shake");
+        setTimeout(()=>document.body.classList.remove("shake"),800);
+    }
+}
+
+document.getElementById("stageButton").addEventListener("click",()=>{
+    stage++; if(stage>3) stage=1;
+    applyStage();
+});
+
+/* 初期化 */
+window.onload = ()=>{
+    generateRecipeAndRarity();
+    applyStage();
+}
+</script>
+
+</body>
+</html>

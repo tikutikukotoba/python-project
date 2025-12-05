@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>合計栄養素</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <a href="/"><button class="top-btn">← 検索へ</button></a>
+
+    <h1 class="title">📊 カート合計</h1>
+
+    <h2 class="subtitle">🛒 カート内食品</h2>
+
+    <form method="POST">
+
+        {% if cart %}
+        {% for item in cart %}
+        <p>
+            <input type="checkbox" name="delete_item" value="{{ loop.index0 }}">
+            {{ item.name }}（{{ item.gram }} g）
+        </p>
+        {% endfor %}
+
+        <button type="submit" name="delete_selected" class="delete-btn">
+            🗑 選択削除
+        </button>
+
+        <button type="submit" name="delete_all" class="delete-all-btn">
+            🔥 全部削除
+        </button>
+
+        <br><br>
+
+        <!-- 🍳 料理ボタン -->
+        <a href="/cook">
+            <button type="button" class="top-btn">
+                🍳 これで料理を作る
+            </button>
+        </a>
+
+        {% else %}
+        <p class="message">カートは空です。</p>
+        {% endif %}
+
+    </form>
+
+    <h2 class="table-title">📈 合計栄養素</h2>
+
+    <table>
+        <tr><th>項目</th><th>合計値</th></tr>
+        {% for col, val in total.items() %}
+        <tr>
+            <td>{{ col }}</td>
+            <td>{{ val }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+/* 背景（ゴージャスなグラデーション） */
+body {
+    font-family: 'Yu Gothic', sans-serif;
+    margin: 0;
+    padding: 40px;
+    background: linear-gradient(135deg, #ff9ecb, #ffd37b, #fff7b3);
+    background-size: 200% 200%;
+    animation: bgMove 10s ease infinite;
+    color: #333;
+}
+
+/* 柔らかい動きで背景が変わる */
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 全体を中央に豪華配置 */
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 25px;
+    box-shadow: 0 0 40px rgba(255, 130, 190, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+/* タイトル */
+.title {
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    color: #d60069;
+    margin-bottom: 25px;
+    text-shadow: 0 0 10px #fff;
+}
+
+/* 検索フォーム */
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+input[type=text] {
+    width: 300px;
+    padding: 12px 18px;
+    border-radius: 30px;
+    border: 2px solid #ff6bb3;
+    font-size: 16px;
+    outline: none;
+    background: #fff;
+    transition: 0.3s;
+}
+
+input[type=text]:focus {
+    box-shadow: 0 0 12px rgba(255, 92, 162, 0.6);
+}
+
+/* 検索ボタン */
+button {
+    padding: 12px 20px;
+    margin-left: 12px;
+    font-size: 15px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #ff6bd6, #ffa36b);
+    color: white;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: bold;
+}
+
+button:hover {
+    transform: scale(1.07);
+    box-shadow: 0 0 10px #fff;
+}
+
+/* メッセージ */
+.message {
+    text-align: center;
+    font-weight: bold;
+    color: #c80055;
+}
+
+/* 候補ボタン */
+/* 候補リストを見やすく・多く表示できるように */
+.candidates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+
+    margin-top: 20px;
+    padding: 10px;
+
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    max-height: 220px;
+    overflow-y: auto;
+
+    width: 100%;         /* ← 横幅を強制確保 */
+    box-sizing: border-box;
+
+    clear: both;         /* ← 上の要素との干渉を防ぐ */
+    display: block;      /* ← 一度 block にして… */
+}
+
+.candidates > form {
+    display: inline-block; /* ← ボタンを並べる */
+}
+
+
+/* 候補ボタン */
+.candidate-btn {
+    padding: 10px 18px;
+    border-radius: 25px;
+    background: #fff;
+    border: 2px solid #ff86ce;
+    color: #b50055;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.25s;
+    white-space: nowrap;    /* ← ボタン内の改行防止 */
+}
+
+.candidate-btn:hover {
+    background: #ffcaea;
+    transform: scale(1.12);
+}
+
+
+.subtitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-left: 50px;
+}
+
+
+/* テーブル */
+.table-title {
+    margin-top: 25px;
+    font-size: 22px;
+    color: #c1005a;
+    text-shadow: 0 0 5px #fff;
+}
+
+/* ゴージャス栄養テーブル */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    margin-top: 15px;
+}
+
+th {
+    padding: 14px 20px;
+    background: linear-gradient(90deg, #ff4fbd, #ff9a57);
+    color: white;
+    font-size: 16px;
+    text-align: left;
+}
+
+td {
+    padding: 14px 20px;
+    background: #fff4fa;
+    border-bottom: 2px solid #ffd3ec;
+}
+
+td:first-child {
+    font-weight: bold;
+    color: #444;
+}
+
+/* 行ホバー */
+tr:hover td {
+    background: #ffe4f5;
+    transition: 0.2s;
+}
