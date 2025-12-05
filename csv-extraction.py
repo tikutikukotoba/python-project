@@ -126,7 +126,7 @@ def index():
                 message = "候補があります。"
 
     return render_template(
-        "見た目.html",
+        "index.html",
         selected_name=selected_name,
         result=result,
         candidates=candidates,
@@ -174,7 +174,7 @@ def total_page():
     total = calc_total(cart)
 
     return render_template(
-        "合計.html",
+        "total.html",
         cart=cart,
         total=total
     )
@@ -185,7 +185,7 @@ def total_page():
 # =======================
 @app.route('/cook')
 def cook():
-    return render_template("料理.html")
+    return render_template("cook.html")
 
 
 if __name__ == '__main__':
